@@ -166,7 +166,7 @@ return {
       })
       for component in ipairs(opts.sections.lualine_c) do
         if type(component) == "table" and component[1] == "filename" then
-          component.path = 2 -- 设置为显示完整绝对路径
+          component.path = 1 -- 设置为显示完整绝对路径
           break
         end
       end
