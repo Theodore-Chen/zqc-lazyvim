@@ -1,51 +1,47 @@
 -- ~/.config/nvim/lua/plugins/osc52.lua
 
 return {
-  -- 这是一个“虚拟”插件配置，专门用于设置剪贴板。
-  -- 我们使用 'VeryLazy' 事件，确保它在启动后加载，不会影响启动时间。
-  event = "VeryLazy",
-  config = function()
-    -- 核心逻辑：仅在检测到 SSH 连接时才覆盖剪贴板设置。
-    -- 在本地 WSL 环境下, vim.env.SSH_CONNECTION 为 nil, 这段代码不会执行，
-    -- Neovim 会继续使用默认的剪贴板提供者 (即你配置的 win32yank.exe)。
+  "ojroques/nvim-osc52",
+  init = function()
+    -- 仅在 SSH 环境中执行
     if vim.env.SSH_CONNECTION then
-      -- 检查远程服务器上是否有 base64 工具
+      -- 检查 base64 工具
       if vim.fn.executable("base64") == 0 then
         vim.notify("OSC52: `base64` command not found. Clipboard integration disabled.", vim.log.levels.WARN)
         return
       end
 
-      -- 定义复制函数
-      local function copy(lines, _)
-        local body = table.concat(lines, "\n")
-        -- 使用 base64 编码，-w0 确保输出在一行内，这至关重要
-        local encoded = vim.fn.system({ "base64", "-w0" }, body)
-        -- 发送 OSC 52 转义序列
-        vim.fn.printf("\x1b]52;c;%s\x07", encoded)
+      local osc52 = require("osc52")
+      if not osc52 then
+        vim.notify("OSC52: Could not load nvim-osc52 plugin.", vim.log.levels.ERROR)
+        return
       end
 
-      -- 定义粘贴函数 (通常依赖终端自己的粘贴功能)
-      local function paste()
-        -- OSC 52 粘贴支持不佳, 这里我们依赖 Neovim 的标准行为，
-        -- 它会向终端请求剪贴板内容，而现代终端都支持这个请求。
-        return vim.fn.split(vim.fn.getreg("+"), "\n")
+      -- 定义一个包装函数来适配 Neovim 的 clipboard API
+      local function copy_wrapper(lines, _)
+        -- Neovim 传入的是一个 table of lines, 我们需要将其合并成一个由换行符分隔的字符串。
+        -- 这正是错误发生的原因，我们现在在这里修正它。
+        local text_to_copy = table.concat(lines, "\n")
+
+        -- 然后，将这个合并好的字符串传递给插件的内部 copy 函数。
+        osc52.copy(text_to_copy)
       end
 
-      -- 设置 Neovim 的剪贴板提供者
+      -- 强制 Neovim 使用我们包装过的函数
       vim.g.clipboard = {
-        name = "osc52-ssh",
+        name = "osc52-wrapper", -- 换个名字以示区分
         copy = {
-          ["+"] = copy,
-          ["*"] = copy,
+          ["+"] = copy_wrapper,
+          ["*"] = copy_wrapper,
         },
         paste = {
-          ["+"] = paste,
-          ["*"] = paste,
+          ["+"] = osc52.paste, -- 粘贴函数通常可以直接使用
+          ["*"] = osc52.paste,
         },
-        cache_enabled = 0, -- 对于外部命令，禁用缓存更可靠
       }
-
-      vim.notify("SSH session detected. OSC52 clipboard enabled.", vim.log.levels.INFO)
+      vim.notify("SSH session detected. Custom OSC52 clipboard provider enforced.", vim.log.levels.INFO)
     end
   end,
+  -- 插件配置可以保留，以备将来需要调整插件本身的行为
+  opts = {},
 }
