@@ -34,9 +34,30 @@ return {
   {
     "hrsh7th/nvim-cmp",
     dependencies = { "hrsh7th/cmp-emoji" },
-    ---@param opts cmp.ConfigSchema
     opts = function(_, opts)
+      local cmp = require("cmp")
+
       table.insert(opts.sources, { name = "emoji" })
+
+      opts.completion = {
+        completeopt = "menu,menuone,noselect",
+      }
+
+      opts.mapping = vim.tbl_extend("force", opts.mapping, {
+        ["<C-e>"] = cmp.mapping.abort(),
+
+        ["<CR>"] = cmp.mapping(function(fallback)
+          if cmp.visible() and cmp.get_selected_entry() then
+            cmp.confirm({ select = true })
+          else
+            fallback()
+          end
+        end, { "i", "s" }),
+
+        ["<C-y>"] = cmp.mapping.confirm({ select = true }),
+      })
+
+      return opts
     end,
   },
 
@@ -198,9 +219,37 @@ return {
     opts = {
       ensure_installed = {
         "stylua",
+        "lua_ls",
         "shellcheck",
         "shfmt",
         "flake8",
+      },
+    },
+  },
+
+  {
+    "neovim/nvim-lspconfig",
+    opts = {
+      servers = {
+        luals = {
+          settings = {
+            Lua = {
+              runtime = {
+                version = "LuaJIT",
+              },
+              diagnostics = {
+                globals = { "vim" },
+              },
+              workspace = {
+                library = vim.api.nvim_get_runtime_file("", true),
+                checkThirdParty = false, -- 避免检查第三方库（比如插件）的警告
+              },
+              type = {
+                castNumberToInteger = true,
+              },
+            },
+          },
+        },
       },
     },
   },
