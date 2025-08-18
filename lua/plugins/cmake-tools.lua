@@ -10,17 +10,17 @@ return {
   },
 
   keys = {
-    { "<leader>cg", "<cmd>CMakeGenerate!<cr>", desc = "CMake: Generate native build system" },
-    { "<leader>cb", "<cmd>CMakeBuild<cr>", desc = "CMake: Build Target" },
-    { "<leader>cB", "<cmd>CMakeBuildCurrentFile<cr>", desc = "CMake: Build targets related to current file" },
-    { "<leader>ct", "<cmd>CMakeSelectBuildTarget<cr>", desc = "CMake: Select Build Target" },
-    { "<leader>ck", "<cmd>CMakeSelectKit<cr>", desc = "CMake: Select Kit (Compiler)" },
-    { "<leader>cr", "<cmd>CMakeRun<cr>", desc = "CMake: Run Executable" },
-    { "<leader>cd", "<cmd>CMakeDebug<cr>", desc = "CMake: Debug Executable" },
-    { "<leader>cD", "<cmd>CMakeDebugCurrentFile<cr>", desc = "CMake: Debug targets related to current file." },
-    { "<leader>cs", "<cmd>CMakeStop<cr>", desc = "CMake: Stop Process" },
-    { "<leader>cR", "<cmd>CMakeCleanAndConfigure<cr>", desc = "CMake: Clean and Reconfigure" },
-    { "<leader>cE", "<cmd>CMakeEditCache<cr>", desc = "CMake: Edit Cache" },
+    { "<leader>mg", "<cmd>CMakeGenerate!<cr>", desc = "CMake: CMakeGenerate!" },
+    { "<leader>mb", "<cmd>CMakeBuild<cr>", desc = "CMake: CMakeBuild" },
+    { "<leader>mB", "<cmd>CMakeBuildCurrentFile<cr>", desc = "CMake: CMakeBuildCurrentFile" },
+    { "<leader>mt", "<cmd>CMakeSelectBuildTarget<cr>", desc = "CMake: CMakeSelectBuildTarget" },
+    { "<leader>mk", "<cmd>CMakeSelectKit<cr>", desc = "CMake: CMakeSelectKit" },
+    { "<leader>mr", "<cmd>CMakeRun<cr>", desc = "CMake: CMakeRun" },
+    { "<leader>mR", "<cmd>CMakeRunCurrentFile<cr>", desc = "CMake: CMakeRunCurrentFile" },
+    { "<leader>md", "<cmd>CMakeDebug<cr>", desc = "CMake: CMakeDebug" },
+    { "<leader>mD", "<cmd>CMakeDebugCurrentFile<cr>", desc = "CMake: CMakeDebugCurrentFile" },
+    { "<leader>ms", "<cmd>CMakeStop<cr>", desc = "CMake: CMakeStop" },
+    { "<leader>mE", "<cmd>CMakeEditCache<cr>", desc = "CMake: CMakeEditCache" },
   },
 
   -- config = function()
