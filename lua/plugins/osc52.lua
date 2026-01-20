@@ -42,9 +42,7 @@ return {
             vim.notify("SSH session detected. Custom OSC52 clipboard provider enforced.", vim.log.levels.INFO)
         end
     end,
-    -- 插件配置可以保留，以备将来需要调整插件本身的行为
     opts = {
         max_length = 0,
-        max_bytes = 75000,
     },
 }
