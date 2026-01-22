@@ -51,36 +51,3 @@ require("lazy").setup({
     },
   },
 })
-
-return {
-  -- 添加 clangd LSP 支持
-  {
-    "neovim/nvim-lspconfig",
-    opts = {
-      servers = {
-        clangd = {
-          capabilities = { offsetEncoding = "utf-8" }, -- 解决 UTF-8 警告
-        },
-      },
-    },
-  },
-
-  -- 添加调试器 (nvim-dap)
-  {
-    "mfussenegger/nvim-dap",
-    init = function()
-      -- 配置 C++ 调试适配器 (需安装 lldb/gdb)
-      require("dap").adapters.lldb = {
-        type = "executable",
-        command = "lldb-vscode", -- 或 'lldb'
-        name = "lldb",
-      }
-      require("dap").configurations.cpp = {
-        { name = "Launch", request = "launch", program = "${fileDirname}/${fileBasenameNoExtension}" },
-      }
-    end,
-  },
-
-  -- 增强 C++ 语法高亮
-  { "p00f/clangd_extensions.nvim" },
-}

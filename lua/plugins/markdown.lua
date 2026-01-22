@@ -27,6 +27,19 @@ return {
                     vim.opt_local.spelllang = { "en", "cjk" }
                 end,
             })
+
+            -- 保存后自动刷新诊断（解决告警不更新的问题）
+            vim.api.nvim_create_autocmd("BufWritePost", {
+                pattern = "*.md",
+                callback = function()
+                    -- 清除当前缓冲的所有诊断缓存
+                    vim.diagnostic.reset(nil, 0)
+                    -- 触发 treesitter 重新解析
+                    pcall(function()
+                        vim.cmd("TSBufEnable markdown")
+                    end)
+                end,
+            })
         end,
     },
 
@@ -58,6 +71,24 @@ return {
         opts = {
             spec = {
                 { "<leader>m", group = "Markdown" },
+            },
+        },
+    },
+
+    -- 手动刷新诊断快捷键
+    {
+        "neovim/nvim-lspconfig",
+        opts = {
+            keys = {
+                {
+                    "<leader>ml",
+                    function()
+                        vim.diagnostic.reset(nil, 0)
+                        vim.cmd("TSBufEnable markdown")
+                        vim.notify("Diagnostics refreshed", vim.log.levels.INFO)
+                    end,
+                    desc = "Refresh Diagnostics",
+                },
             },
         },
     },
